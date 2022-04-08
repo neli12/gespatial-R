@@ -1,1 +1,1 @@
-# gespatial-R
+# Geospatial-R

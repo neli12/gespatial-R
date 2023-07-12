@@ -2,12 +2,12 @@
 library(soiltexture)
 library(raster)
 library(soilassessment)
+library(rasterVis)
 
 
 ## Load raster file with Clay, Silt and Sand layers downloaded from SoilGrids
 list.files()
 Texture <- stack("CSSil_MSMTGO.tif")
-plot(Texture)
 
 
 ## Convert raster to data frame, round values and rename columns
@@ -44,14 +44,26 @@ df.text$X3[df.text$X3 == "Cl, SiCl, ClLo, SiClLo"] <- "Cl"
 df.text$X3[df.text$X3 == "SiCl, SiClLo"] <- 'SiCl'
 df.text$X3[df.text$X3 == "SaLo, LoSa"] <- 'SaLo'
 df.text$X3[df.text$X3 == "Cl, ClLo"] <- 'Cl'
+df.text$X3[df.text$X3 == "Lo, SiLo"] <- 'Lo'
 df.text$Class <- as.numeric(as.factor(df.text$X3))
-df.text <- df.text[,-3]  # remove string column
+df.text$X3 <- as.factor(df.text$X3)
+summary(df.text$X3)
+df.text.def <- df.text[,-3]  # remove string column
+
+# Cl=1, ClLo=2, Lo=3, LoSa=4, Sa=5, SaCl=6, SaClLo=7, SaLo=8, SiCl=9, SiClLo=10, SiLo=11
 
 
 ## Rename columns and convert to raster
-colnames(df.text) <- c('x', 'y', 'class')
+colnames(df.text.def) <- c('x', 'y', 'class')
 summary(as.factor(df.text))
-r.df <- rasterFromXYZ(df.text)
+r.df <- rasterFromXYZ(df.text.def)
+
+## Plot raster
+r.df <- as.factor(r.df)
+tar <- levels(r.df)[[1]]
+tar[["Class"]]<-c('Cl', 'ClLo', 'Lo', 'LoSa', 'Sa', 'SaCl', 'SaClLo', 'SaLo', 'SiCl', 'SiClLo', 'SiLo')
+levels(r.df)<-tar
+levelplot(r.df)
 plot(r.df)
 
 ## Export raster

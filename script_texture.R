@@ -6,6 +6,7 @@ library(rasterVis)
 
 
 ## Load raster file with Clay, Silt and Sand layers downloaded from SoilGrids
+setwd("D:/Control-sites")
 list.files()
 Texture <- stack("CSSil_MSMTGO.tif")
 
@@ -47,7 +48,6 @@ df.text$X3[df.text$X3 == "Cl, ClLo"] <- 'Cl'
 df.text$X3[df.text$X3 == "Lo, SiLo"] <- 'Lo'
 df.text$Class <- as.numeric(as.factor(df.text$X3))
 df.text$X3 <- as.factor(df.text$X3)
-summary(df.text$X3)
 df.text.def <- df.text[,-3]  # remove string column
 
 # Cl=1, ClLo=2, Lo=3, LoSa=4, Sa=5, SaCl=6, SaClLo=7, SaLo=8, SiCl=9, SiClLo=10, SiLo=11
@@ -55,7 +55,6 @@ df.text.def <- df.text[,-3]  # remove string column
 
 ## Rename columns and convert to raster
 colnames(df.text.def) <- c('x', 'y', 'class')
-summary(as.factor(df.text))
 r.df <- rasterFromXYZ(df.text.def)
 
 ## Plot raster
@@ -67,4 +66,5 @@ levelplot(r.df)
 plot(r.df)
 
 ## Export raster
-writeRaster(r.df, 'Texture-reclass.tif')
+writeRaster(r.df, 'Texture-reclass.tif', overwrite = TRUE)
+
